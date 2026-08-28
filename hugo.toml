@@ -1,4 +1,8 @@
-baseURL = 'https://tkuhn.github.io/tkuhn-np/'
+# Project pages inherit the custom domain of the user Pages site, and
+# tkuhn/tkuhn.github.com carries a CNAME for www.tkuhn.org -- so this is served
+# from www.tkuhn.org/tkuhn-np/, not tkuhn.github.io/tkuhn-np/ (that redirects).
+# At cutover this becomes 'https://www.tkuhn.org/' and the CNAME moves here.
+baseURL = 'https://www.tkuhn.org/tkuhn-np/'
 locale = 'en-us'
 title = 'Tobias Kuhn'
 

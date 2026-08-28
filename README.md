@@ -6,8 +6,9 @@ A second personal website for Tobias Kuhn, built entirely from the
 
 **Status: work in progress.** The live site remains at
 [www.tkuhn.org](https://www.tkuhn.org/) (repo: `tkuhn/tkuhn.github.com`).
-This one is staged at <https://tkuhn.github.io/tkuhn-np/> until it is ready to
-take over the domain.
+This one is staged at <https://www.tkuhn.org/tkuhn-np/> until it is ready to
+take over the domain. (A GitHub Pages *project* site inherits the custom domain
+of the user site, so it appears under www.tkuhn.org rather than github.io.)
 
 ## How it works
 
