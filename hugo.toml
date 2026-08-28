@@ -168,13 +168,28 @@ date = 'year'
 link = 'work'
 summary = 'recipients_label_multi'
 
+# Positions, via the view nanopub published 2026-08-28. A position with no end
+# year is one still held, so `date` is the start year and the summary carries
+# the organisation.
+[[params.nanopub.sections]]
+id = 'positions'
+title = 'Positions'
+blurb = 'Positions I have held, as recorded in the nanopublication network.'
+empty = 'No positions linked to this ORCID in the network yet.'
+weight = 5
+view = 'https://w3id.org/np/RAb59szeFPPGf8DvCIaTGB_36OL2MhWteNiGULwmmgRsY/positions-view'
+[params.nanopub.sections.fields]
+title = 'position_label'
+date = 'startYear'
+summary = 'unit'
+
 # A live section: queried in the browser on every visit, never built into the
 # HTML. Use this where freshness matters more than indexability.
 [[params.nanopub.sections]]
 id = 'activity'
 title = 'Activity'
 blurb = 'Everything I have published to the network — queried live, in your browser.'
-weight = 5
+weight = 6
 mode = 'live'
 limit = 20
 view = 'https://w3id.org/np/RAZse-1U8VD7qGWkFwLa2eu9gC6raGUL0z6bmSD711YTA/latest-nanopubs-by-user-view'
