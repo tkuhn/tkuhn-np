@@ -9,6 +9,11 @@ on:
   schedule:
     - cron: "23 4 * * *"
   workflow_dispatch:
+    inputs:
+      refresh:
+        description: 'Re-query the network instead of reusing cached responses'
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -46,7 +51,12 @@ jobs:
           sudo dpkg -i "${RUNNER_TEMP}/${deb}"
           hugo version
 
+      # Query responses live in this cache with maxAge = '24h' (hugo.toml), so a
+      # manual run started less than a day after the last one would otherwise
+      # rebuild from stale data and silently miss newly published nanopubs.
+      # Skip the restore to force a fresh fetch.
       - name: Restore Hugo cache
+        if: ${{ !inputs.refresh }}
         uses: actions/cache@v4
         with:
           path: ${{ env.HUGO_CACHEDIR }}
