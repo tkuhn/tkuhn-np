@@ -168,18 +168,25 @@ date = 'year'
 link = 'work'
 summary = 'recipients_label_multi'
 
-# Positions, via the view nanopub published 2026-08-28. A position with no end
-# year is one still held, so `date` is the start year and the summary carries
-# the organisation.
+# Career: positions and degrees in one timeline. This names a `query` rather
+# than a `view`, because no single view nanopub spans both types -- so the
+# subject is supplied here via queryParams instead of coming from the view's
+# target field. The published positions view still serves the Nanodash page.
+#
+# The query runs against the `full` repo rather than a type repo, since it
+# unions vivo:Position and vivo:AwardedDegree. Measured at ~0.2s: the person
+# filter is selective enough that the full repo is not a problem here.
 [[params.nanopub.sections]]
-id = 'positions'
-title = 'Positions'
-blurb = 'Positions I have held, as recorded in the nanopublication network.'
-empty = 'No positions linked to this ORCID in the network yet.'
+id = 'career'
+title = 'Career'
+blurb = 'Positions held and degrees awarded, as recorded in the nanopublication network.'
+empty = 'Nothing linked to this ORCID in the network yet.'
 weight = 5
-view = 'https://w3id.org/np/RAb59szeFPPGf8DvCIaTGB_36OL2MhWteNiGULwmmgRsY/positions-view'
+query = 'https://w3id.org/np/RAZ2e5Zx_f7DgQAs3qLgcFRgABQNEhp-OudcjCtsOPZBg/get-cv-entries-for-person'
+[params.nanopub.sections.queryParams]
+person = '$ORCID'
 [params.nanopub.sections.fields]
-title = 'position_label'
+title = 'entry_label'
 date = 'startYear'
 summary = 'unit'
 
