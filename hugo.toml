@@ -93,7 +93,12 @@ icon = 'mastodon'
 # `weight` stay here. Use `query` instead of `view` to name a query directly.
 # ---------------------------------------------------------------------------
 [params.nanopub]
-endpoint = 'https://query.knowledgepixels.com/'
+# Was query.knowledgepixels.com. Switched 2026-08-28: that instance was in
+# LOADING_INITIAL and silently served incomplete data -- same commit built
+# 15 talks and 0 awards there against 17 and 6 here. An under-filled query is
+# not a build failure, so this degrades silently; switch back once
+# `curl -sI https://query.knowledgepixels.com/ | grep Query-Status` says READY.
+endpoint = 'https://query.petapico.org/'
 nanodash = 'https://nanodash.knowledgepixels.com/'
 orcid = 'https://orcid.org/0000-0002-1267-0234'
 verbose = true
@@ -147,13 +152,29 @@ date = 'date'
 content = 'text'
 link = 'url'
 
+# Awards, via the view nanopub published 2026-08-28. The query returns all
+# recipients of each award, not just the queried one -- a best paper award is
+# received jointly by every author of the paper -- so `summary` lists them.
+[[params.nanopub.sections]]
+id = 'awards'
+title = 'Awards'
+blurb = 'Awards and prizes, as recorded in the nanopublication network.'
+empty = 'No awards linked to this ORCID in the network yet.'
+weight = 4
+view = 'https://w3id.org/np/RAz3Ue74hYOIgExXIO96GLCnrCciYPCpcAiQDQu10KMkI/awards-view'
+[params.nanopub.sections.fields]
+title = 'award_label'
+date = 'year'
+link = 'work'
+summary = 'recipients_label_multi'
+
 # A live section: queried in the browser on every visit, never built into the
 # HTML. Use this where freshness matters more than indexability.
 [[params.nanopub.sections]]
 id = 'activity'
 title = 'Activity'
 blurb = 'Everything I have published to the network — queried live, in your browser.'
-weight = 4
+weight = 5
 mode = 'live'
 limit = 20
 view = 'https://w3id.org/np/RAZse-1U8VD7qGWkFwLa2eu9gC6raGUL0z6bmSD711YTA/latest-nanopubs-by-user-view'
