@@ -1,0 +1,158 @@
+baseURL = 'https://tkuhn.github.io/tkuhn-np/'
+locale = 'en-us'
+title = 'Tobias Kuhn'
+
+disableKinds = ['rss']
+
+# ---------------------------------------------------------------------------
+# The theme comes from the published module. `hugo mod get` pins the version in
+# go.mod; `hugo mod get -u github.com/Nanopublication/nanopub-hugo` moves it
+# forward. Needs a Go toolchain (both here and in CI).
+# ---------------------------------------------------------------------------
+[[module.imports]]
+path = 'github.com/Nanopublication/nanopub-hugo'
+
+# ---------------------------------------------------------------------------
+# REQUIRED. resources.GetRemote refuses any media type not on this allowlist,
+# and Hugo cannot let a module contribute it. Do not anchor with $: responses
+# carry a ";charset=UTF-8" suffix.
+# ---------------------------------------------------------------------------
+[security.http]
+mediaTypes = ['^application/ld\+json', '^application/sparql-results\+json']
+
+# Post bodies carry markup. Hugo denies text/html from a content adapter by
+# default; allowing it is a deliberate trust decision about the source — here,
+# nanopubs signed by your own key. Drop this block and set `contentPlain = true`
+# on the posts section instead if you would rather strip tags than trust it.
+[security]
+allowContent = ['^text/html$', '^text/markdown$']
+
+# ---------------------------------------------------------------------------
+# Hugo caches resources.GetRemote forever by default (maxAge = -1), so an empty
+# or failed query result gets pinned and no later `hugo` run ever asks again --
+# the section just stays empty. Expire daily instead: the nightly CI rebuild
+# picks up new nanopubs, and a cached copy still covers a network failure
+# within the window.
+# ---------------------------------------------------------------------------
+[caches.getresource]
+maxAge = '24h'
+
+# Declare any taxonomy a section maps to, or Hugo ignores the terms.
+[taxonomies]
+venue = 'venues'
+
+[params]
+description = 'CEO and founder at Knowledge Pixels. Semantic technologies for communicating knowledge.'
+
+# The home-page headline. Each entry is either a role -- rendered as
+# "Role · Organisation", with the organisation linked when `href` is set -- or a
+# free-form `text` line.
+highlights = [
+  { role = 'CEO and Founder', org = 'Knowledge Pixels', href = 'https://knowledgepixels.com/' },
+  { text = 'Formerly academia; nanopublications, FAIR data, and controlled natural language' },
+]
+
+# `icon` names a mark in layouts/_partials/icon.html. Any other value renders as
+# literal text, so a character like '✉' still works for a link with no mark.
+[[params.links]]
+label = 'Email'
+href = 'mailto:kuhntobias@gmail.com'
+icon = 'email'
+[[params.links]]
+label = 'ORCID'
+href = 'https://orcid.org/0000-0002-1267-0234'
+icon = 'orcid'
+[[params.links]]
+label = 'GitHub'
+href = 'https://github.com/tkuhn'
+icon = 'github'
+[[params.links]]
+label = 'Google Scholar'
+href = 'http://scholar.google.com/citations?user=26_NNqEAAAAJ'
+icon = 'scholar'
+[[params.links]]
+label = 'LinkedIn'
+href = 'https://www.linkedin.com/in/tkuhn/'
+icon = 'linkedin'
+[[params.links]]
+label = 'Mastodon'
+href = 'https://mastodon.social/@tkuhn'
+icon = 'mastodon'
+
+# ---------------------------------------------------------------------------
+# Everything below is the whole content model. Connect views, get a website.
+#
+# Each section names a `view` -- a view nanopublication already published in the
+# network, which says which query to run and which of its parameters carries the
+# subject. The view's own title and structural position are ignored: what a
+# section is called and where it sits is this site's business, so `title` and
+# `weight` stay here. Use `query` instead of `view` to name a query directly.
+# ---------------------------------------------------------------------------
+[params.nanopub]
+endpoint = 'https://query.knowledgepixels.com/'
+nanodash = 'https://nanodash.knowledgepixels.com/'
+orcid = 'https://orcid.org/0000-0002-1267-0234'
+verbose = true
+
+# 67 papers in the network as of 2026-08-28, against 108 listed on tkuhn.org --
+# the gap is backfill work, not a site problem. New paper nanopubs appear here
+# on the next nightly rebuild with no change to this file.
+[[params.nanopub.sections]]
+id = 'publications'
+title = 'Publications'
+blurb = 'Papers I have authored, as recorded in the nanopublication network.'
+empty = 'No papers linked to this ORCID in the network yet.'
+weight = 1
+view = 'https://w3id.org/np/RAR5QfVtTglBt4tuOYnlH6zs6MkLlYrFrMVYFrVGZOBJA/papers-for-author-view'
+[params.nanopub.sections.fields]
+title = 'paper_label'
+date = 'publication_date'
+link = 'paper'
+summary = 'journal_label'
+[params.nanopub.sections.taxonomies]
+venues = 'journal_label'
+
+[[params.nanopub.sections]]
+id = 'talks'
+title = 'Talks'
+blurb = 'Invited talks and presentations.'
+empty = 'No presentations linked to this ORCID in the network yet.'
+weight = 2
+view = 'https://w3id.org/np/RAq02zzyspzoN3I-ViEWKxtQfDAsCyNswKW1fzbA-02Xc/presentations-view'
+[params.nanopub.sections.fields]
+title = 'presentation_label'
+date = 'date'
+link = 'presentation'
+
+# Static rather than live: posts are the one section with real prose in it, and
+# prose is worth having in the HTML for search engines. `content` carries the
+# post body, which is why [security] allowContent above is needed.
+[[params.nanopub.sections]]
+id = 'posts'
+title = 'Posts'
+blurb = 'Short posts and updates, published as nanopublications.'
+empty = 'No posts yet.'
+weight = 3
+view = 'https://w3id.org/np/RA4HJpu6eJPhf6N2w1_-5M7jb1o7mcVdH0UuJ0tlMQbG8/user-posts-view'
+# Post bodies are HTML, not markdown. Keeping the markup is what [security]
+# allowContent above pays for; swap to `contentPlain = true` to strip tags.
+contentMediaType = 'text/html'
+[params.nanopub.sections.fields]
+title = 'title'
+date = 'date'
+content = 'text'
+link = 'url'
+
+# A live section: queried in the browser on every visit, never built into the
+# HTML. Use this where freshness matters more than indexability.
+[[params.nanopub.sections]]
+id = 'activity'
+title = 'Activity'
+blurb = 'Everything I have published to the network — queried live, in your browser.'
+weight = 4
+mode = 'live'
+limit = 20
+view = 'https://w3id.org/np/RAZse-1U8VD7qGWkFwLa2eu9gC6raGUL0z6bmSD711YTA/latest-nanopubs-by-user-view'
+[params.nanopub.sections.fields]
+title = 'label'
+date = 'date'

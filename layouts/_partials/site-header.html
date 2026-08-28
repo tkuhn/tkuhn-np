@@ -1,0 +1,48 @@
+{{- /*
+  The name, photo and nanopub count come from the network via the module's
+  profile partial -- the same well-known queries Nanodash uses for user pages --
+  so none of it is hand-maintained here. Anything under params.nanopub.profile
+  overrides what the network says.
+*/ -}}
+{{- $p := partial "nanopub/profile.html" . -}}
+{{- $nanodash := printf "%s/" (strings.TrimSuffix "/" (site.Params.nanopub.nanodash | default "https://nanodash.net/")) -}}
+<header class="site-header">
+  {{ with $p.photo }}<img class="avatar" src="{{ . }}" alt="" width="96" height="96" />{{ end }}
+  <div class="site-id">
+    <h1>{{ if .IsHome }}{{ $p.name | default site.Title }}{{ else }}<a href="{{ site.Home.RelPermalink }}">{{ $p.name | default site.Title }}</a>{{ end }}</h1>
+
+    {{ with site.Params.highlights }}
+      <ul class="highlights">
+        {{ range . }}
+          {{ $h := . }}
+          <li>
+            {{- with $h.text -}}
+              {{ . }}
+            {{- else -}}
+              {{ $h.role }}
+              {{- with $h.org }} ·
+                {{ if $h.href }}<a href="{{ $h.href }}">{{ . }}</a>{{ else }}{{ . }}{{ end }}
+              {{- end -}}
+            {{- end -}}
+          </li>
+        {{ end }}
+      </ul>
+    {{ end }}
+
+    <p class="lede">{{ site.Params.description }}</p>
+
+    {{ with site.Params.links }}
+      <ul class="links">
+        {{ range . }}
+          <li><a href="{{ .href }}" rel="me">{{ partial "icon.html" .icon }}<span>{{ .label }}</span></a></li>
+        {{ end }}
+      </ul>
+    {{ end }}
+
+    <p class="np-stats">
+      {{- with $p.stats.validNpCount }}<strong>{{ . }}</strong> valid nanopublications{{ end }}
+      {{- with $p.intro }} · <a href="{{ printf "%snp?id=%s" $nanodash (. | urlquery) }}">introduction</a>{{ end }}
+      {{- with $p.pubkeyHashes }} · {{ len . }} signing key{{ if gt (len .) 1 }}s{{ end }}{{ end }}
+    </p>
+  </div>
+</header>

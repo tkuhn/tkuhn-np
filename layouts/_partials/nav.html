@@ -1,0 +1,14 @@
+{{- /*
+  Built from the section pages themselves rather than from `relURL` on a
+  hand-made path: this site is served from a subpath (/tkuhn-np/), and
+  .RelPermalink is the only form that reliably carries it. A live section still
+  has a section page, so every section appears here regardless of mode.
+*/ -}}
+<nav class="main-nav" aria-label="Sections">
+  {{- range sort (site.Params.nanopub.sections | default slice) "weight" }}
+    {{- $sec := . }}
+    {{- with site.GetPage (printf "/%s" $sec.id) }}
+      <a href="{{ .RelPermalink }}"{{ if eq $.RelPermalink .RelPermalink }} aria-current="page"{{ end }}>{{ $sec.title | default $sec.id }}</a>
+    {{- end }}
+  {{- end }}
+</nav>
