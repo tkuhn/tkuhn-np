@@ -112,7 +112,7 @@ title = 'Publications'
 blurb = 'Papers I have authored, as recorded in the nanopublication network.'
 empty = 'No papers linked to this ORCID in the network yet.'
 weight = 1
-view = 'https://registry.petapico.org/np/RAR5QfVtTglBt4tuOYnlH6zs6MkLlYrFrMVYFrVGZOBJA'
+view = 'https://w3id.org/np/RAR5QfVtTglBt4tuOYnlH6zs6MkLlYrFrMVYFrVGZOBJA/papers-for-author-view'
 [params.nanopub.sections.fields]
 title = 'paper_label'
 date = 'publication_date'
@@ -127,7 +127,7 @@ title = 'Talks'
 blurb = 'Invited talks and presentations.'
 empty = 'No presentations linked to this ORCID in the network yet.'
 weight = 2
-view = 'https://registry.petapico.org/np/RAq02zzyspzoN3I-ViEWKxtQfDAsCyNswKW1fzbA-02Xc'
+view = 'https://w3id.org/np/RAq02zzyspzoN3I-ViEWKxtQfDAsCyNswKW1fzbA-02Xc/presentations-view'
 [params.nanopub.sections.fields]
 title = 'presentation_label'
 date = 'date'
@@ -142,7 +142,7 @@ title = 'Posts'
 blurb = 'Short posts and updates, published as nanopublications.'
 empty = 'No posts yet.'
 weight = 3
-view = 'https://registry.petapico.org/np/RA4HJpu6eJPhf6N2w1_-5M7jb1o7mcVdH0UuJ0tlMQbG8'
+view = 'https://w3id.org/np/RA4HJpu6eJPhf6N2w1_-5M7jb1o7mcVdH0UuJ0tlMQbG8/user-posts-view'
 # Post bodies are HTML, not markdown. Keeping the markup is what [security]
 # allowContent above pays for; swap to `contentPlain = true` to strip tags.
 contentMediaType = 'text/html'
@@ -161,7 +161,7 @@ title = 'Awards'
 blurb = 'Awards and prizes, as recorded in the nanopublication network.'
 empty = 'No awards linked to this ORCID in the network yet.'
 weight = 4
-view = 'https://registry.petapico.org/np/RAz3Ue74hYOIgExXIO96GLCnrCciYPCpcAiQDQu10KMkI'
+view = 'https://w3id.org/np/RAz3Ue74hYOIgExXIO96GLCnrCciYPCpcAiQDQu10KMkI/awards-view'
 [params.nanopub.sections.fields]
 title = 'award_label'
 date = 'year'
@@ -182,13 +182,36 @@ title = 'Career'
 blurb = 'Positions held and degrees awarded, as recorded in the nanopublication network.'
 empty = 'Nothing linked to this ORCID in the network yet.'
 weight = 5
-query = 'https://registry.petapico.org/np/RAZ2e5Zx_f7DgQAs3qLgcFRgABQNEhp-OudcjCtsOPZBg'
+query = 'https://w3id.org/np/RAZ2e5Zx_f7DgQAs3qLgcFRgABQNEhp-OudcjCtsOPZBg/get-cv-entries-for-person'
 [params.nanopub.sections.queryParams]
 person = '$ORCID'
 [params.nanopub.sections.fields]
 title = 'entry_label'
 date = 'startYear'
 summary = 'unit'
+
+# Projects taken part in. Like Events this names a `query` rather than a `view`,
+# but for a different reason: the project definition and the participation
+# statement sit in the SAME nanopublication, so there is no join -- the query is
+# named directly only because no view nanopub exists for it yet.
+#
+# Dates here are plain years (xsd:gYear), not the full dateTime the Events
+# section uses on the same schema:startDate predicate. That is deliberate: it
+# states only the precision project records actually have.
+[[params.nanopub.sections]]
+id = 'projects'
+title = 'Projects'
+blurb = 'Research projects I have taken part in.'
+empty = 'No projects linked to this ORCID in the network yet.'
+weight = 6
+query = 'https://w3id.org/np/RALA6FacvKnUGk6tEhv7Ldub5tLwFhToZinCALrAQRy7M/get-projects-for-participant'
+[params.nanopub.sections.queryParams]
+participant = '$ORCID'
+[params.nanopub.sections.fields]
+title = 'project_label'
+date = 'startYear'
+link = 'website'
+summary = 'description'
 
 # Events organized. Names a `query` rather than a `view`: the event definition
 # and the organizer role grant are separate nanopubs in different type repos,
@@ -198,8 +221,8 @@ id = 'events'
 title = 'Events'
 blurb = 'Workshops and other academic events I have organized.'
 empty = 'No events linked to this ORCID in the network yet.'
-weight = 6
-query = 'https://registry.petapico.org/np/RAIEWBhPg4db5fEo5rIf5NOuJLx1PSoEQcrxWN-jChgJ0'
+weight = 7
+query = 'https://w3id.org/np/RAIEWBhPg4db5fEo5rIf5NOuJLx1PSoEQcrxWN-jChgJ0/get-events-organized-by'
 [params.nanopub.sections.queryParams]
 organizer = '$ORCID'
 [params.nanopub.sections.fields]
@@ -214,10 +237,10 @@ summary = 'description'
 id = 'activity'
 title = 'Activity'
 blurb = 'Everything I have published to the network — queried live, in your browser.'
-weight = 7
+weight = 8
 mode = 'live'
 limit = 20
-view = 'https://registry.petapico.org/np/RAZse-1U8VD7qGWkFwLa2eu9gC6raGUL0z6bmSD711YTA'
+view = 'https://w3id.org/np/RAZse-1U8VD7qGWkFwLa2eu9gC6raGUL0z6bmSD711YTA/latest-nanopubs-by-user-view'
 [params.nanopub.sections.fields]
 title = 'label'
 date = 'date'
