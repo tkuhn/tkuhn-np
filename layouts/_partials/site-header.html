@@ -41,7 +41,7 @@
 
     <p class="np-stats">
       {{- with $p.stats.validNpCount }}<strong>{{ . }}</strong> valid nanopublications{{ end }}
-      {{- with $p.intro }} · <a href="{{ printf "%snp?id=%s" $nanodash (. | urlquery) }}">introduction</a>{{ end }}
+      {{- with $p.intro }} · <a href="{{ printf "%sexplore?id=%s" $nanodash (. | urlquery) }}">introduction</a>{{ end }}
       {{- with $p.pubkeyHashes }} · {{ len . }} signing key{{ if gt (len .) 1 }}s{{ end }}{{ end }}
     </p>
   </div>
