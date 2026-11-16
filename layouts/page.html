@@ -8,6 +8,10 @@
     </p>
     {{ with .Params.summary }}<p class="np-body">{{ replace . "\n" ", " }}</p>{{ end }}
     {{ with .Content }}<div class="np-body">{{ . }}</div>{{ end }}
+    {{ with .Params.section }}
+      {{ $sec := partial "nanopub/section-config.html" (dict "id" .) }}
+      {{ if and $.Params.nanopub (eq $sec.details "live") }}{{ partial "live-details.html" $ }}{{ end }}
+    {{ end }}
     {{ range $tax, $_ := site.Taxonomies }}
       {{ with $.GetTerms $tax }}
         <p class="np-meta">{{ range . }}<a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>{{ end }}</p>

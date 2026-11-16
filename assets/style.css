@@ -71,7 +71,19 @@ ul.np-list li:last-child { border-bottom: none; }
 nanopub-list ul { list-style: none; margin: 0; padding: 0; }
 nanopub-list li { display: flex; gap: 1rem; justify-content: space-between; align-items: baseline; padding: .5rem 0; border-bottom: 1px solid var(--rule); }
 nanopub-list time { flex: none; font-size: .78rem; color: var(--faint); }
+nanopub-list time { white-space: nowrap; }
 nanopub-list section h3 { margin: 1.5rem 0 .5rem; }
+nanopub-list > p { color: var(--faint); font-style: italic; font-size: .9rem; }
+
+/* <nanopub-item> on a detail page: what only the nanopublication carries.
+   Both parts stay in the DOM when the nanopublication has nothing for them,
+   so hide the empty ones rather than leave a heading over nothing. */
+nanopub-item { display: block; }
+nanopub-item .np-body { font-size: .95rem; color: var(--fg); margin: 1rem 0; }
+nanopub-item .np-body:empty { display: none; }
+.np-seealso:not(:has(li)) { display: none; }
+.np-seealso ul { list-style: none; margin: 0; padding: 0; font-size: .85rem; }
+.np-seealso a { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--accent); }
 
 footer { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--rule); font-size: .8rem; color: var(--faint); }
 footer code { font-size: .95em; }

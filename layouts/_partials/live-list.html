@@ -1,0 +1,61 @@
+{{- /*
+  A live section: a <nanopub-list> that queries the network in the browser.
+
+  This stands in for the module's nanopub/live.html, which can do neither of
+  the two things below. It still leans on the module for everything else --
+  resolving the section's view to a query, and loading the elements script.
+
+  1. No `endpoint` attribute. Given one, <nanopub-list> asks that instance and
+     nothing else, so the section reads "Failed to load." whenever it is down.
+     Without one (nanopub-elements >= 0.4.0) it tries the known query instances
+     in turn and moves on when one errors or times out.
+
+     The fallback is for an instance that fails, not one that is behind: an
+     instance still in LOADING_INITIAL answers 200 with incomplete rows and is
+     taken at its word. The build-time sections keep the single `endpoint`
+     pinned in hugo.toml for exactly that reason. Set `liveEndpoint` under
+     [params.nanopub] to pin the browser to one instance too.
+
+  2. A <template> for the rows. The built-in row is a bare title and a raw
+     xsd:dateTime; this one links the title to the nanopublication and prints
+     a readable date. `np` is a w3id.org URI, which sends a browser to Nanodash.
+
+  Args:
+    section      id of a section in params.nanopub.sections
+    groupByYear  put the rows under one heading per year
+*/ -}}
+
+{{- $np := site.Params.nanopub -}}
+{{- $label := printf "section %q" .section -}}
+{{- $sec := partial "nanopub/section-config.html" (dict "id" .section) -}}
+{{- $source := partial "nanopub/section-source.html" (dict "section" $sec "label" $label) -}}
+{{- $fields := $sec.fields | default dict -}}
+{{- $titleField := $fields.title | default "label" -}}
+{{- $dateField := $fields.date -}}
+
+{{- /* Same token substitution the module applies before it queries. */ -}}
+{{- $params := dict -}}
+{{- range $k, $v := $source.params -}}
+  {{- $val := replace (printf "%v" $v) "$ORCID" ($np.orcid | default "") -}}
+  {{- $val = replace $val "$PUBKEYS" ($np.pubkeys | default "") -}}
+  {{- $params = merge $params (dict $k $val) -}}
+{{- end -}}
+
+{{- partial "nanopub/elements-script.html" . -}}
+
+<nanopub-list
+  query-template="{{ $source.queryId }}"
+  {{ with $np.liveEndpoint }}endpoint="{{ . }}"{{ end }}
+  {{ with $params }}params="{{ . | jsonify }}"{{ end }}
+  {{ with $dateField }}date-field="{{ . }}"{{ end }}
+  {{ with $sec.limit }}limit="{{ . }}"{{ end }}
+  {{ if .groupByYear }}group-by-year{{ end }}
+  link-target="_blank"
+>
+  <template>
+    <li>
+      <a class="np-title" data-bind-href="{{ $fields.link | default "np" }}" data-bind="{{ $titleField }}"></a>
+      {{ with $dateField }}<time data-bind="{{ . }}" data-format="date"></time>{{ end }}
+    </li>
+  </template>
+</nanopub-list>

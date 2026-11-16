@@ -30,6 +30,20 @@ author is hand-maintained here except the links and the one-line highlights.
 **Publishing a nanopublication is how you add content to this site.** The
 nightly workflow rebuilds and it appears — no commit needed.
 
+### What runs in the browser
+
+Two things are fetched on every visit rather than at build time, both by
+[nanopub-elements](https://github.com/Nanopublication/nanopub-elements) (the
+version is pinned by `elementsVersion` in `hugo.toml`):
+
+- **The Activity list** — `layouts/_partials/live-list.html`. It names no query
+  endpoint, so the component moves on to the next known instance when one is
+  down. Set `liveEndpoint` under `[params.nanopub]` to pin it to one instead.
+- **The abstract and "See also" links on talk pages** —
+  `layouts/_partials/live-details.html`. They are read from each talk's own
+  nanopublication, because the talks query does not return them. A section opts
+  in with `details = 'live'`; the partial explains where that works.
+
 ## Local development
 
 Requires [Hugo extended](https://gohugo.io/) ≥ 0.146 and a Go toolchain (the

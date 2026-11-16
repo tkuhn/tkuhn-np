@@ -133,6 +133,10 @@ blurb = 'Invited talks and presentations.'
 empty = 'No presentations linked to this ORCID in the network yet.'
 weight = 2
 view = 'https://w3id.org/np/RAq02zzyspzoN3I-ViEWKxtQfDAsCyNswKW1fzbA-02Xc/presentations-view'
+# The query returns only the label, date and event. The abstract and the links
+# to slides are in the nanopublication itself, so each talk page loads it in
+# the browser -- see layouts/_partials/live-details.html for when this works.
+details = 'live'
 [params.nanopub.sections.fields]
 title = 'presentation_label'
 date = 'date'

@@ -1,0 +1,38 @@
+{{- /*
+  The parts of an entry that only its nanopublication carries.
+
+  A section's query returns a handful of columns; the nanopublication behind a
+  row often says more. For a talk that is the abstract and the links to the
+  slides. <nanopub-item> fetches the nanopublication in the browser and fills
+  this template from its assertion, so nothing here needs a wider query.
+
+  Needs nanopub-elements >= 0.5.0, for two things:
+    - <nanopub-item> keeps every value of a predicate, not just the first --
+      a talk can have several rdfs:seeAlso links;
+    - <template data-bind-each> repeats its content once per value.
+  `link-target` on <nanopub-item> is from 0.4.0.
+
+  Opt a section in with `details = 'live'` in hugo.toml. It only works where
+  the entry is the FIRST node of the assertion graph, because that is the only
+  node <nanopub-item> reads. That holds for talks; it does not for publications
+  (the journal comes first), awards, projects or career entries (a person
+  does), so those would render empty.
+
+  Context: the page.
+*/ -}}
+
+{{- partial "nanopub/elements-script.html" . -}}
+
+<nanopub-item uri="{{ .Params.nanopub }}" link-target="_blank">
+  <template>
+    <div class="np-body" data-bind-html="description"></div>
+    <div class="np-seealso">
+      <h3>See also</h3>
+      <ul>
+        <template data-bind-each="http://www.w3.org/2000/01/rdf-schema#seeAlso">
+          <li><a data-bind-href="." data-bind="."></a></li>
+        </template>
+      </ul>
+    </div>
+  </template>
+</nanopub-item>
