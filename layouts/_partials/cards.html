@@ -1,0 +1,17 @@
+{{- /*
+  Entries as a grid of cards, for sections with `display = 'cards'`.
+  Args: pages, sec.
+*/ -}}
+{{- $sec := .sec -}}
+<ul class="cards">
+  {{- range .pages }}
+    {{- $when := partial "when.html" (dict "page" . "sec" $sec) }}
+    {{- $sub := partial "summary.html" (dict "page" . "length" 170) }}
+    <li class="card">
+      {{ with $when }}<span class="card-when">{{ . }}</span>{{ end }}
+      <a class="card-title" href="{{ .RelPermalink }}">{{ .Title }}</a>
+      {{ with $sub }}<p class="card-sub">{{ . }}</p>{{ end }}
+      {{ partial "prov.html" . }}
+    </li>
+  {{- end }}
+</ul>

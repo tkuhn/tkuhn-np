@@ -1,0 +1,13 @@
+{{- /*
+  The provenance link every entry carries: the nanopublication mark, linking to
+  the entry's nanopublication in Nanodash. The mark is Nanodash's own icon
+  (nanopub-icon.svg), inlined so that it takes the colour of the link.
+  Context: the page.
+*/ -}}
+{{- $nanodash := printf "%s/" (strings.TrimSuffix "/" (site.Params.nanopub.nanodash | default "https://nanodash.net/")) -}}
+{{- with .Params.nanopub -}}
+  <a class="prov" href="{{ printf "%sexplore?id=%s" $nanodash (. | urlquery) }}" title="{{ . }}">
+    <svg class="prov-icon" viewBox="0 0 8 8" width="14" height="14" aria-hidden="true" fill="currentColor"><path d="M5,8H8L3,0H0M8,4.8V0H5M0,3.2V8H3"/></svg>
+    <span class="vh">Source nanopublication</span>
+  </a>
+{{- end -}}

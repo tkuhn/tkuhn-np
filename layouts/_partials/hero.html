@@ -1,0 +1,39 @@
+{{- /*
+  The opening of the home page. The name and photo come from the network via the
+  module's profile partial -- the same well-known queries Nanodash uses for user
+  pages -- so neither is hand-maintained here. Anything under
+  params.nanopub.profile overrides what the network says.
+
+  The last word of the name carries the highlight; everything before it sits on
+  the line above.
+*/ -}}
+{{- $p := partialCached "nanopub/profile.html" . -}}
+{{- $name := $p.name | default site.Title -}}
+{{- $words := split $name " " -}}
+{{- $last := index (last 1 $words) 0 -}}
+{{- $first := delimit (first (sub (len $words) 1) $words) " " -}}
+<div class="container hero">
+  <div class="hero-text">
+    {{- range site.Params.highlights }}
+      {{- $h := . }}
+      {{- with $h.role }}
+        <p class="hero-role">{{ . }}{{ with $h.org }} at {{ if $h.href }}<a href="{{ $h.href }}">{{ . }}</a>{{ else }}{{ . }}{{ end }}{{ end }}</p>
+      {{- end }}
+    {{- end }}
+    <h1 class="hero-name">{{ with $first }}{{ . }}<br />{{ end }}<span class="hl">{{ $last }}</span></h1>
+    <p class="hero-about">{{ site.Params.about | default site.Params.description }}</p>
+    {{- range site.Params.highlights }}
+      {{- with .text }}<p class="hero-note">{{ . }}</p>{{ end }}
+    {{- end }}
+    {{- with site.Params.links }}
+      <ul class="hero-links">
+        {{- range . }}
+          <li><a href="{{ .href }}" rel="me">{{ .label }}</a></li>
+        {{- end }}
+      </ul>
+    {{- end }}
+  </div>
+  {{- with $p.photo }}
+    <div class="hero-photo"><img src="{{ . }}" alt="Portrait of {{ $name }}" width="340" height="340" /></div>
+  {{- end }}
+</div>

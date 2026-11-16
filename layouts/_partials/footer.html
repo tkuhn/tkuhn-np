@@ -1,7 +1,19 @@
-<footer>
-  <p>Content on this site comes from the <a href="https://nanopub.net/">nanopublication network</a>;
-    the site itself is static HTML, built with
-    <a href="https://github.com/Nanopublication/nanopub-hugo">nanopub-hugo</a>.
-    There are no content files for the sections above — see <code>hugo.toml</code>.</p>
-  <p>My current site remains at <a href="https://www.tkuhn.org/">www.tkuhn.org</a>.</p>
+{{- /*
+  The nanopublication count, the signing keys and the introduction come from the
+  network via the module's profile partial, like the name and photo at the top
+  of the home page.
+*/ -}}
+{{- $p := partialCached "nanopub/profile.html" . -}}
+{{- $nanodash := printf "%s/" (strings.TrimSuffix "/" (site.Params.nanopub.nanodash | default "https://nanodash.net/")) -}}
+<footer class="site-footer">
+  <div class="container">
+    <p>Content on this site comes from the <a href="https://nanopub.net/">nanopublication network</a>
+      {{- with $p.stats.validNpCount }}: {{ . | int | lang.FormatNumber 0 }} valid nanopublications
+        {{- with $p.pubkeyHashes }}, signed with {{ len . }} key{{ if gt (len .) 1 }}s{{ end }}{{ end }}
+      {{- end }}. The site itself is static HTML, built with
+      <a href="https://github.com/Nanopublication/nanopub-hugo">nanopub-hugo</a>.
+      There are no content files for the sections above — see <code>hugo.toml</code>.</p>
+    <p>{{ with $p.intro }}My <a href="{{ printf "%sexplore?id=%s" $nanodash (. | urlquery) }}">introduction</a> in the network.<br />{{ end }}
+      My current site remains at <a href="https://www.tkuhn.org/">www.tkuhn.org</a>.</p>
+  </div>
 </footer>

@@ -1,0 +1,17 @@
+{{- /*
+  Loads the nanopub-elements custom elements (<nanopub-list>, <nanopub-item>).
+
+  This stands in for the module's nanopub/elements-script.html. That one emits
+  the tag at most once per page and remembers having done so in the page's
+  Store -- which `hugo server` keeps between rebuilds. So after the first live
+  rebuild the page is rendered again, the flag is still set, no tag is written,
+  and every live part of the page stays empty until the server is restarted.
+  A clean `hugo` build renders each page once and is not affected.
+
+  Here the tag is simply written wherever a live part is. A browser fetches and
+  runs a module script once per address, however often the tag appears.
+
+  The version is pinned the same way: params.nanopub.elementsVersion.
+*/ -}}
+{{- $version := site.Params.nanopub.elementsVersion | default "0.5.0" -}}
+<script type="module" src="https://esm.sh/@nanopub/nanopub-elements@{{ $version }}"></script>

@@ -21,13 +21,13 @@
   Context: the page.
 */ -}}
 
-{{- partial "nanopub/elements-script.html" . -}}
+{{- partial "elements-script.html" . -}}
 
 <nanopub-item uri="{{ .Params.nanopub }}" link-target="_blank">
   <template>
-    <div class="np-body" data-bind-html="description"></div>
-    <div class="np-seealso">
-      <h3>See also</h3>
+    <div class="prose" data-bind-html="description"></div>
+    <div class="seealso">
+      <h2>See also</h2>
       <ul>
         <template data-bind-each="http://www.w3.org/2000/01/rdf-schema#seeAlso">
           <li><a data-bind-href="." data-bind="."></a></li>

@@ -1,24 +1,58 @@
 {{ define "main" }}
   {{ $nanodash := printf "%s/" (strings.TrimSuffix "/" (site.Params.nanopub.nanodash | default "https://nanodash.net/")) }}
-  <article class="np-section">
-    <h2>{{ .Title }}</h2>
-    <p class="np-meta">
-      {{ with .Date }}{{ if not .IsZero }}<time datetime="{{ .Format "2006-01-02" }}">{{ .Format "2006-01-02" }}</time>{{ end }}{{ end }}
-      {{ with .Params.source }}<a href="{{ . }}">{{ . }}</a>{{ end }}
-    </p>
-    {{ with .Params.summary }}<p class="np-body">{{ replace . "\n" ", " }}</p>{{ end }}
-    {{ with .Content }}<div class="np-body">{{ . }}</div>{{ end }}
-    {{ with .Params.section }}
-      {{ $sec := partial "nanopub/section-config.html" (dict "id" .) }}
-      {{ if and $.Params.nanopub (eq $sec.details "live") }}{{ partial "live-details.html" $ }}{{ end }}
-    {{ end }}
-    {{ range $tax, $_ := site.Taxonomies }}
-      {{ with $.GetTerms $tax }}
-        <p class="np-meta">{{ range . }}<a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>{{ end }}</p>
-      {{ end }}
-    {{ end }}
-    {{ with .Params.nanopub }}
-      <p class="np-more"><a href="{{ printf "%sexplore?id=%s" $nanodash (. | urlquery) }}">Source nanopublication →</a></p>
-    {{ end }}
+  {{ $sec := dict }}
+  {{ with .Params.section }}{{ $sec = partial "nanopub/section-config.html" (dict "id" .) }}{{ end }}
+  {{ $when := partial "when.html" (dict "page" . "sec" $sec) }}
+  {{ $summary := partial "summary.html" (dict "page" (dict "Params" (dict "summary" (.Params.summary | default "")) "Plain" "") "length" 4000) }}
+  <article>
+    <div class="container page-head">
+      {{ with .Parent }}<p class="crumb"><a href="{{ .RelPermalink }}">← {{ .Title }}</a></p>{{ end }}
+      <h1 class="page-title">{{ .Title }}</h1>
+      {{ with $when }}<p class="page-when">{{ . }}</p>{{ end }}
+    </div>
+
+    <div class="band band--brown">
+      <div class="container page-body">
+        <div class="page-main">
+          {{- /* A summary that only repeats a term below -- a paper's journal
+                 is both -- is left to the term, which is a link. */ -}}
+          {{ $terms := slice }}
+          {{ range $tax, $_ := site.Taxonomies }}{{ range $.GetTerms $tax }}{{ $terms = $terms | append .LinkTitle }}{{ end }}{{ end }}
+          {{ if and $summary (not (in $terms (string $summary))) }}<p class="page-summary">{{ $summary }}</p>{{ end }}
+          {{ with .Content }}<div class="prose">{{ . }}</div>{{ end }}
+          {{ if and .Params.nanopub (eq $sec.details "live") }}{{ partial "live-details.html" . }}{{ end }}
+          {{ range $tax, $_ := site.Taxonomies }}
+            {{ with $.GetTerms $tax }}
+              <p class="page-terms"><span class="page-terms-label">{{ if eq (len .) 1 }}{{ (index . 0).Data.Singular | humanize }}{{ else }}{{ (index . 0).Data.Plural | humanize }}{{ end }}</span>{{ range . }}<a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>{{ end }}</p>
+            {{ end }}
+          {{ end }}
+        </div>
+
+        {{- /* Where this page comes from: the nanopublication, the query that
+               found it, and the address the entry itself points to. */ -}}
+        <aside class="source" aria-labelledby="source-title">
+          <h2 id="source-title">Source</h2>
+          <dl>
+            {{ with .Params.nanopub }}
+              {{ $code := index (last 1 (split . "/")) 0 }}
+              <dt>Nanopublication</dt>
+              <dd><a href="{{ . }}" title="{{ . }}">{{ substr $code 0 16 }}…</a></dd>
+            {{ end }}
+            {{ with .Params.queryId }}
+              {{ $parts := split . "/" }}
+              <dt>Found by the query</dt>
+              <dd><a href="{{ printf "%sexplore?id=%s" $nanodash (printf "https://w3id.org/np/%s" (index $parts 0) | urlquery) }}">{{ index (last 1 $parts) 0 }}</a></dd>
+            {{ end }}
+            {{ with .Params.source }}
+              <dt>Points to</dt>
+              <dd><a href="{{ . }}">{{ strings.TrimPrefix "www." (replaceRE `^https?://` "" .) | truncate 60 }}</a></dd>
+            {{ end }}
+          </dl>
+          {{ with .Params.nanopub }}
+            <a class="button" href="{{ printf "%sexplore?id=%s" $nanodash (. | urlquery) }}"><span>Open the nanopublication</span><span class="arrow" aria-hidden="true">↗</span></a>
+          {{ end }}
+        </aside>
+      </div>
+    </div>
   </article>
 {{ end }}

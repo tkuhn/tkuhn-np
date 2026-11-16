@@ -1,0 +1,35 @@
+{{- /*
+  The date of an entry as text, in the style its section asks for.
+
+  Args: page, sec (the section's entry in params.nanopub.sections).
+  Returns a string, empty when the entry has no date.
+
+    dateStyle = 'range'  "2015 – 2022" from the startYear and endYear columns;
+                         "Since 2023" while there is no end; a degree is one year
+    dateStyle = 'day'    "26 Mar 2026"
+    otherwise            "2026"
+*/ -}}
+{{- $out := "" -}}
+{{- $row := .page.Params.row | default dict -}}
+{{- $style := "" -}}
+{{- with .sec }}{{ $style = .dateStyle | default "" }}{{ end -}}
+{{- if eq $style "range" -}}
+  {{- with index $row "startYear" -}}
+    {{- $out = . -}}
+    {{- if ne (index $row "entryKind") "degree" -}}
+      {{- $end := index $row "endYear" -}}
+      {{- if not $end -}}
+        {{- $out = printf "Since %s" . -}}
+      {{- else if ne $end . -}}
+        {{- $out = printf "%s – %s" . $end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- else if not .page.Date.IsZero -}}
+  {{- if eq $style "day" -}}
+    {{- $out = .page.Date.Format "2 Jan 2006" -}}
+  {{- else -}}
+    {{- $out = .page.Date.Format "2006" -}}
+  {{- end -}}
+{{- end -}}
+{{- return $out -}}

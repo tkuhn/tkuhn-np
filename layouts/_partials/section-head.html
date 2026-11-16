@@ -1,0 +1,25 @@
+{{- /*
+  The heading of a section: the title with the accent band behind it, and on the
+  right either the live marker or, on the home page, the link to everything in
+  the section.
+
+  Args: page (the section page), sec (its entry in params.nanopub.sections),
+  home (true on the home page, where the title is an h2 that links onward).
+*/ -}}
+{{- $page := .page -}}
+{{- $sec := .sec -}}
+{{- $limit := $sec.limit | default (cond (eq $sec.display "cards") 6 8) -}}
+{{- $count := len $page.Pages -}}
+<div class="section-head">
+  {{- if .home }}
+    <h2><a href="{{ $page.RelPermalink }}"><span class="hl">{{ $page.Title }}</span></a></h2>
+  {{- else }}
+    <h1><span class="hl">{{ $page.Title }}</span></h1>
+  {{- end }}
+  {{- if eq $sec.mode "live" }}
+    <span class="live"><span class="live-mark" aria-hidden="true"></span>Live</span>
+  {{- else if and .home (or (gt $count $limit) (and (eq $sec.display "timeline") (gt $count 0))) }}
+    <a class="more" href="{{ $page.RelPermalink }}">All {{ $count }} →</a>
+  {{- end }}
+</div>
+{{ with $page.Params.blurb }}<p class="blurb">{{ . }}</p>{{ end }}

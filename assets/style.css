@@ -1,110 +1,267 @@
-/* Deliberately plain: this example demonstrates the data, not a design.
-   Bring your own theme — nanopub-hugo ships no layouts and no opinions. */
+/* Layout: full-width bands that alternate between a light brown and white, with
+   a few dark ones (the "Latest" band, buttons, the footer). One accent colour,
+   used for the highlight under the name, the career bars and small marks.
+   Light only, by choice. */
 
 :root {
-  --fg: #1a1a1a;
-  --muted: #6a6a6a;
-  --faint: #9a9a9a;
-  --bg: #fff;
-  --rule: #e4e4e4;
-  --accent: #245ea8;
+  color-scheme: light;
+
+  --ink: #151515;      /* text */
+  --muted: #4d4d4d;    /* secondary text */
+  --paper: #ffffff;
+  --brown: #f1eee8;    /* every second band */
+  --coral: #ec9d88;    /* the accent */
+  --slate: #283845;    /* dark bands, rules, labels */
+  --line: #cbc6bc;     /* hairlines */
+
+  /* Body text is 17px. These are the three sizes below the titles; nothing on
+     the site is set smaller than --fs-label. */
+  --fs-label: 15.5px;  /* uppercase labels */
+  --fs-note: 16.5px;   /* legends, breadcrumbs, the footer */
+  --fs-sub: 17px;      /* second lines, blurbs, navigation */
+
+  /* --text is the plain stack; --sans, used everywhere, puts the emoji font
+     first -- see the @font-face below. */
+  --text: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --sans: "Noto Emoji", var(--text);
+  --gutter: clamp(16px, 4vw, 32px);
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --fg: #e6e6e6;
-    --muted: #a0a0a0;
-    --faint: #6e6e6e;
-    --bg: #171717;
-    --rule: #2e2e2e;
-    --accent: #7fb0ea;
-  }
+
+/* Emoji in one colour, the colour of the text around them. Same rule as
+   Nanodash: Noto Emoji (monochrome) leads the font stack, so the browser uses
+   it before the system's colour emoji font. The unicode-range is derived from
+   the font's cmap, excluding U+FE0F so the browser doesn't try to resolve emoji
+   variation sequences through this font; it keeps the font away from letters,
+   digits and punctuation, and means the file is only fetched by a page that
+   has an emoji on it. The one addition here is the weight range, so that an
+   emoji in a heading uses the font's own bold.
+   Noto Emoji: Copyright 2013 Google LLC, SIL Open Font License 1.1. */
+@font-face {
+  font-family: "Noto Emoji";
+  src: url("fonts/NotoEmoji.woff2") format("woff2");
+  font-weight: 300 700;
+  unicode-range: U+A9, U+AE, U+200D, U+203C, U+2049, U+20E3, U+2122, U+2139, U+2194-2199, U+21A9-21AA, U+231A-231B, U+2328, U+23CF, U+23E9-23F3, U+23F8-23FA, U+24C2, U+25AA-25AB, U+25B6, U+25C0, U+25FB-25FE, U+2600-2604, U+260E, U+2611, U+2614-2615, U+2618, U+261D, U+2620, U+2622-2623, U+2626, U+262A, U+262E-262F, U+2638-263A, U+2640, U+2642, U+2648-2653, U+265F-2660, U+2663, U+2665-2666, U+2668, U+267B, U+267E-267F, U+2692-2697, U+2699, U+269B-269C, U+26A0-26A1, U+26A7, U+26AA-26AB, U+26B0-26B1, U+26BD-26BE, U+26C4-26C5, U+26C8, U+26CE-26CF, U+26D1, U+26D3-26D4, U+26E9-26EA, U+26F0-26F5, U+26F7-26FA, U+26FD, U+2702, U+2705, U+2708-270D, U+270F, U+2712, U+2714, U+2716, U+271D, U+2721, U+2728, U+2733-2734, U+2744, U+2747, U+274C, U+274E, U+2753-2755, U+2757, U+2763-2764, U+2795-2797, U+27A1, U+27B0, U+27BF, U+2934-2935, U+2B05-2B07, U+2B1B-2B1C, U+2B50, U+2B55, U+3030, U+303D, U+3297, U+3299, U+1F004, U+1F0CF, U+1F170-1F171, U+1F17E-1F17F, U+1F18E, U+1F191-1F19A, U+1F1E6-1F1FF, U+1F201-1F202, U+1F21A, U+1F22F, U+1F232-1F23A, U+1F250-1F251, U+1F300-1F321, U+1F324-1F393, U+1F396-1F397, U+1F399-1F39B, U+1F39E-1F3F0, U+1F3F3-1F3F5, U+1F3F7-1F4FD, U+1F4FF-1F53D, U+1F549-1F54E, U+1F550-1F567, U+1F56F-1F570, U+1F573-1F57A, U+1F587, U+1F58A-1F58D, U+1F590, U+1F595-1F596, U+1F5A4-1F5A5, U+1F5A8, U+1F5B1-1F5B2, U+1F5BC, U+1F5C2-1F5C4, U+1F5D1-1F5D3, U+1F5DC-1F5DE, U+1F5E1, U+1F5E3, U+1F5E8, U+1F5EF, U+1F5F3, U+1F5FA-1F64F, U+1F680-1F6C5, U+1F6CB-1F6D2, U+1F6D5-1F6D7, U+1F6DC-1F6E5, U+1F6E9, U+1F6EB-1F6EC, U+1F6F0, U+1F6F3-1F6FC, U+1F7E0-1F7EB, U+1F7F0, U+1F90C-1F93A, U+1F93C-1F945, U+1F947-1F9FF, U+1FA70-1FA7C, U+1FA80-1FA88, U+1FA90-1FABD, U+1FABF-1FAC5, U+1FACE-1FADB, U+1FAE0-1FAE8, U+1FAF0-1FAF8;
 }
+
+/* An arrow that is part of the interface, not of the content: set in the text
+   font, since the range above includes U+2197 and would draw it as an emoji. */
+.arrow { font-family: var(--text); }
 
 * { box-sizing: border-box; }
 
+html { -webkit-text-size-adjust: 100%; }
+
+/* a column at least as tall as the window, so that on a short page the footer
+   sits at the bottom and the band above it fills the space */
 body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   margin: 0;
-  background: var(--bg);
-  color: var(--fg);
-  font: 16px/1.6 ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 17px/1.5 var(--sans);
 }
+main, main > article { flex: 1; display: flex; flex-direction: column; }
+main > article > .band, main > .band--page { flex: 1; }
 
-.wrap { max-width: 42rem; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+a { color: inherit; text-underline-offset: 4px; }
+a:hover { text-decoration-thickness: 3px; }
+:focus-visible { outline: 3px solid var(--slate); outline-offset: 2px; }
+.band--dark :focus-visible, .site-footer :focus-visible { outline-color: var(--coral); }
 
-a { color: inherit; text-decoration-color: var(--faint); text-underline-offset: 2px; }
-a:hover { color: var(--accent); text-decoration-color: var(--accent); }
+img { max-width: 100%; }
 
-h1 { font-size: 1.5rem; margin: 0 0 .3rem; }
-h2 { font-size: .95rem; text-transform: uppercase; letter-spacing: .05em; margin: 0 0 .3rem; }
-h3 { font-size: .8rem; color: var(--faint); margin: 1.5rem 0 .5rem; font-weight: 500; }
+/* the explicit width matters where a container is itself a flex item (the
+   opening of the home page, the head of an entry): with auto margins alone it
+   would shrink to its content instead of filling the column */
+.container { width: 100%; max-width: 1184px; margin: 0 auto; padding-inline: var(--gutter); }
 
-.lede { color: var(--muted); margin: 0 0 2rem; }
-.blurb { color: var(--faint); font-size: .88rem; margin: 0 0 1rem; }
+/* visually hidden, still read out */
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-.main-nav {
-  display: flex; gap: 1.25rem; flex-wrap: wrap;
-  margin: 1.5rem 0 2.5rem; padding: .75rem 0;
-  border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
-  font-size: .9rem;
+.skip { position: absolute; left: -999px; }
+.skip:focus { left: 8px; top: 8px; z-index: 10; padding: 8px 14px; background: var(--slate); color: #fff; font-weight: 700; }
+
+/* --- the highlight ------------------------------------------------------ */
+/* A band of the accent behind the lower part of a name or title: from a little
+   below the baseline up to about the middle of the lowercase letters. It is a
+   background on the text itself, so a title that wraps gets a band on each
+   line, and it reaches slightly past the first and last letter. */
+.hl {
+  padding-inline: 0.04em 0.08em;
+  margin-inline: -0.04em -0.08em;
+  background-image: linear-gradient(to bottom, transparent 56%, var(--coral) 56%, var(--coral) 84%, transparent 84%);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
-.main-nav a { text-decoration: none; color: var(--muted); }
-.main-nav a[aria-current="page"] { color: var(--fg); text-decoration: underline; text-decoration-color: var(--accent); }
+/* a linked title: the band grows on hover */
+a:hover > .hl { background-image: linear-gradient(to bottom, transparent 22%, var(--coral) 22%, var(--coral) 84%, transparent 84%); }
 
-section.np-section { margin-bottom: 3rem; }
+/* --- top bar ------------------------------------------------------------ */
+.topbar-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 24px; padding-block: 14px; }
+.brand { display: flex; align-items: center; min-height: 44px; font-size: 20px; font-weight: 800; letter-spacing: -0.02em; text-decoration: none; }
+.main-nav { display: flex; flex-wrap: wrap; gap: 0 26px; font-size: var(--fs-sub); font-weight: 600; }
+.main-nav a { display: flex; align-items: center; min-height: 44px; text-decoration: none; }
+.main-nav a:hover,
+.main-nav a[aria-current="page"] { text-decoration: underline; text-decoration-thickness: 3px; text-decoration-color: var(--coral); text-underline-offset: 8px; }
 
-ul.np-list { list-style: none; margin: 0; padding: 0; }
-ul.np-list li {
-  display: flex; gap: 1rem; justify-content: space-between; align-items: baseline;
-  padding: .5rem 0; border-bottom: 1px solid var(--rule);
-}
-ul.np-list li:last-child { border-bottom: none; }
-.np-title { display: block; }
-.np-body { font-size: .85rem; color: var(--muted); margin-top: .15rem; }
-.np-meta { flex: none; display: flex; gap: .5rem; align-items: baseline; font-size: .78rem; color: var(--faint); white-space: nowrap; }
-.np-prov { font-family: ui-monospace, Menlo, monospace; font-size: .68rem; padding: .05rem .3rem; border: 1px solid var(--rule); border-radius: 3px; text-decoration: none; }
-.np-prov:hover { border-color: var(--accent); }
-.np-empty { color: var(--faint); font-style: italic; font-size: .9rem; }
-.np-more { font-size: .85rem; margin: 1rem 0 0; }
-.np-more a { color: var(--accent); text-decoration: none; }
+/* --- opening of the home page ------------------------------------------ */
+.hero { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 40px 64px; padding-block: 40px 72px; }
+.hero-text { flex: 1 1 560px; min-width: 0; }
+.hero-role { margin: 0; font-weight: 700; color: var(--slate); }
+.hero-name { margin: 10px 0 28px; font-size: clamp(56px, 9.4vw, 128px); font-weight: 800; line-height: 0.9; letter-spacing: -0.05em; }
+.hero-about { margin: 0; max-width: 660px; font-size: clamp(19px, 2vw, 22px); font-weight: 500; line-height: 1.4; text-wrap: pretty; }
+.hero-note { margin: 14px 0 0; color: var(--muted); }
+.hero-links { display: flex; flex-wrap: wrap; gap: 0 24px; margin: 12px 0 0; padding: 0; list-style: none; font-size: var(--fs-sub); font-weight: 600; }
+.hero-links a { display: flex; align-items: center; min-height: 44px; }
+.hero-photo { flex: 0 1 340px; min-width: 0; }
+.hero-photo img { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; }
 
-/* the live component renders unstyled semantic HTML — match the static lists */
-nanopub-list ul { list-style: none; margin: 0; padding: 0; }
-nanopub-list li { display: flex; gap: 1rem; justify-content: space-between; align-items: baseline; padding: .5rem 0; border-bottom: 1px solid var(--rule); }
-nanopub-list time { flex: none; font-size: .78rem; color: var(--faint); }
-nanopub-list time { white-space: nowrap; }
-nanopub-list section h3 { margin: 1.5rem 0 .5rem; }
-nanopub-list > p { color: var(--faint); font-style: italic; font-size: .9rem; }
+/* --- the dark band: latest paper, talk, post --------------------------- */
+.band--dark { background: var(--slate); color: #fff; }
+.latest { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 32px 40px; padding-block: 44px 52px; }
+.latest-item { display: flex; flex-direction: column; gap: 6px; padding-top: 14px; border-top: 3px solid var(--coral); text-decoration: none; }
+.latest-label { font-size: var(--fs-label); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--coral); }
+.latest-title { font-size: 24px; font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; text-wrap: pretty; }
+.latest-sub { font-size: var(--fs-sub); color: var(--brown); }
+.latest-item:hover .latest-title { text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 4px; }
 
-/* <nanopub-item> on a detail page: what only the nanopublication carries.
+/* --- bands and section headings ---------------------------------------- */
+.band { padding-block: 64px 72px; }
+.band--brown { background: var(--brown); }
+.band--page { padding-top: 40px; }
+
+/* the minimum height keeps the gap to the blurb the same with and without a link on the right */
+.section-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0 32px; min-height: 56px; }
+.section-head h1,
+.section-head h2 { margin: 0; font-size: clamp(30px, 3.6vw, 44px); font-weight: 800; line-height: 1.1; letter-spacing: -0.035em; }
+.section-head h2 a { text-decoration: none; }
+.more { display: inline-flex; align-items: center; min-height: 44px; font-size: var(--fs-sub); font-weight: 600; color: var(--slate); }
+.blurb { margin: 4px 0 20px; max-width: 680px; font-size: var(--fs-sub); color: var(--muted); }
+/* a heading with no blurb under it still keeps its distance from what follows */
+.section-head + :not(.blurb) { margin-top: 20px; }
+.empty { margin: 0; color: var(--muted); }
+.crumb { margin: 0 0 16px; font-size: var(--fs-note); font-weight: 700; color: var(--slate); }
+.crumb a { text-decoration: none; }
+.crumb a:hover { text-decoration: underline; }
+
+.live { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; font-size: var(--fs-note); font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; }
+.live-mark { width: 12px; height: 12px; background: var(--slate); animation: live-pulse 1.6s ease-in-out infinite; }
+@keyframes live-pulse { 50% { opacity: 0.25; } }
+@media (prefers-reduced-motion: reduce) { .live-mark { animation: none; } }
+
+/* --- rows --------------------------------------------------------------- */
+.rows,
+nanopub-list ul { margin: 0; padding: 0; list-style: none; border-top: 3px solid var(--slate); }
+.rows--below { margin-top: 40px; }
+.row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 32px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.row-when { flex: 0 0 150px; font-size: 19px; font-weight: 800; color: var(--slate); }
+.row-main { flex: 1 1 300px; min-width: 0; }
+.row-title { font-size: 18px; font-weight: 600; text-decoration: none; text-wrap: pretty; }
+.row-title:hover { text-decoration: underline; }
+.row-sub { font-size: var(--fs-sub); color: var(--muted); }
+
+/* the nanopublication mark: a link to the entry's nanopublication */
+.prov { align-self: center; display: inline-flex; align-items: center; justify-content: center; min-width: 36px; min-height: 36px; color: var(--slate); }
+/* faint until pointed at or focused, so it does not compete with the titles */
+.prov-icon { display: block; width: 14px; height: 14px; opacity: 0.4; }
+.prov:hover { color: var(--coral); }
+.prov:hover .prov-icon,
+.prov:focus-visible .prov-icon { opacity: 1; }
+
+/* the live list renders the same rows; these are the parts it adds itself */
+nanopub-list { display: block; }
+nanopub-list time.row-when { flex-basis: 170px; font-size: var(--fs-sub); }
+nanopub-list section + section { margin-top: 32px; }
+nanopub-list section h3 { margin: 0 0 8px; font-size: 19px; font-weight: 800; color: var(--slate); }
+nanopub-list > p { margin: 0; color: var(--muted); }
+
+/* --- cards -------------------------------------------------------------- */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 32px 40px; margin: 0; padding: 0; list-style: none; }
+.card { display: flex; flex-direction: column; gap: 6px; padding-top: 14px; border-top: 3px solid var(--slate); }
+.card-when { font-size: var(--fs-label); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--slate); }
+.card-title { font-size: 21px; font-weight: 800; line-height: 1.2; letter-spacing: -0.02em; text-decoration: none; text-wrap: pretty; }
+.card-title:hover { text-decoration: underline; text-decoration-thickness: 3px; }
+.card-sub { margin: 0; font-size: var(--fs-sub); color: var(--muted); }
+.card .prov { align-self: flex-start; justify-content: flex-start; margin-top: auto; }
+
+/* --- timeline ----------------------------------------------------------- */
+.tl-plate { padding: 20px 24px 16px; background: var(--paper); }
+.tl-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 24px; margin-bottom: 16px; font-size: var(--fs-note); }
+.tl-key { display: flex; align-items: center; gap: 8px; }
+.tl-swatch { width: 34px; height: 18px; background: var(--coral); border-left: 3px solid var(--slate); }
+.tl-swatch--degree { width: 10px; background: var(--slate); }
+.tl-hint { margin-left: auto; color: var(--muted); }
+
+/* the one part of the page that may be wider than a phone: it scrolls sideways */
+.tl-scroll { overflow-x: auto; }
+.tl { min-width: 960px; }
+.tl-frame { position: relative; padding-top: 2px; border-top: 3px solid var(--slate); border-bottom: 3px solid var(--slate); }
+.tl-grid { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--line); }
+.tl-rows { position: relative; margin: 0; padding: 0; list-style: none; }
+.tl-row { position: relative; height: 56px; margin-bottom: 2px; }
+.tl-bar { position: absolute; top: 0; bottom: 0; background: var(--coral); border-left: 3px solid var(--slate); text-decoration: none; }
+.tl-bar--degree { width: 10px; background: var(--slate); }
+.tl-label { position: absolute; top: 7px; left: 12px; white-space: nowrap; }
+.tl-bar--degree .tl-label { left: 17px; }
+.tl-what { display: block; font-size: 17px; font-weight: 700; line-height: 1.25; }
+.tl-where { display: block; font-size: 16px; line-height: 1.3; }
+.tl-bar:hover .tl-what { text-decoration: underline; }
+.tl-axis { position: relative; height: 24px; margin-top: 8px; font-size: var(--fs-label); font-weight: 700; color: var(--slate); }
+.tl-axis span { position: absolute; transform: translateX(-50%); }
+.tl-axis span.tl-first { transform: none; }
+
+/* --- a single entry ----------------------------------------------------- */
+.page-head { padding-block: 32px 48px; }
+.page-title { margin: 0; max-width: 24em; font-size: clamp(30px, 4.4vw, 54px); font-weight: 800; line-height: 1.06; letter-spacing: -0.04em; text-wrap: balance; }
+.page-when { margin: 14px 0 0; font-size: 19px; font-weight: 800; color: var(--slate); }
+
+.page-body { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 32px 56px; }
+.page-main { flex: 2 1 480px; min-width: 0; max-width: 46rem; }
+.page-main > :first-child { margin-top: 0; }
+.page-summary { margin: 0 0 1em; font-size: 20px; font-weight: 500; line-height: 1.45; text-wrap: pretty; }
+.prose { font-size: 18px; line-height: 1.55; overflow-wrap: anywhere; }
+.prose > :first-child { margin-top: 0; }
+.prose p { margin: 0 0 1em; }
+.page-terms { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 20px; margin: 24px 0 0; font-size: 20px; font-weight: 600; }
+.page-terms-label { flex-basis: 100%; font-size: var(--fs-label); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--slate); }
+
+/* <nanopub-item> on an entry's page: what only the nanopublication carries.
    Both parts stay in the DOM when the nanopublication has nothing for them,
    so hide the empty ones rather than leave a heading over nothing. */
 nanopub-item { display: block; }
-nanopub-item .np-body { font-size: .95rem; color: var(--fg); margin: 1rem 0; }
-nanopub-item .np-body:empty { display: none; }
-.np-seealso:not(:has(li)) { display: none; }
-.np-seealso ul { list-style: none; margin: 0; padding: 0; font-size: .85rem; }
-.np-seealso a { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--accent); }
+nanopub-item .prose:empty { display: none; }
+.seealso:not(:has(li)) { display: none; }
+.seealso { margin-top: 28px; }
+.seealso h2,
+.source h2 { margin: 0 0 10px; font-size: var(--fs-label); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--slate); }
+.seealso ul { margin: 0; padding: 0; list-style: none; border-top: 3px solid var(--slate); }
+.seealso li { padding: 10px 0; border-bottom: 1px solid var(--line); }
+.seealso a { display: block; overflow: hidden; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
 
-footer { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--rule); font-size: .8rem; color: var(--faint); }
-footer code { font-size: .95em; }
+.source { flex: 1 1 280px; min-width: 0; padding: 20px 24px 24px; background: var(--paper); border-top: 3px solid var(--slate); }
+.source dl { margin: 0 0 20px; }
+.source dt { margin-top: 12px; font-size: var(--fs-note); color: var(--muted); }
+.source dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
 
-@media (max-width: 32rem) {
-  ul.np-list li, nanopub-list li { flex-direction: column; gap: .2rem; }
-}
+.button { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 0 18px; background: var(--slate); color: #fff; font-weight: 800; text-decoration: none; }
+.button:hover { background: var(--ink); }
 
-/* --- site header ------------------------------------------------------- */
-.site-header { display: flex; gap: 1.25rem; align-items: flex-start; margin-bottom: 1.5rem; }
-.site-header .avatar { border-radius: 50%; flex: 0 0 auto; object-fit: cover; }
-.site-id { min-width: 0; }
-.site-header h1 { margin: 0 0 .35rem; }
-ul.highlights { list-style: none; margin: 0 0 .5rem; padding: 0; }
-ul.highlights li { font-size: .95rem; }
-ul.links { list-style: none; display: flex; flex-wrap: wrap; gap: .9rem; margin: .6rem 0 .4rem; padding: 0; }
-ul.links a { display: inline-flex; align-items: center; gap: .3rem; text-decoration: none; }
-ul.links a:hover span { text-decoration: underline; }
-.icon { vertical-align: -2px; }
-.np-stats { font-size: .85rem; opacity: .75; margin: .2rem 0 0; }
+/* --- footer ------------------------------------------------------------- */
+.site-footer { background: var(--slate); color: #fff; font-size: var(--fs-note); }
+.site-footer .container { display: flex; flex-wrap: wrap; gap: 16px 56px; padding-block: 40px 64px; }
+.site-footer p { margin: 0; text-wrap: pretty; }
+.site-footer p:first-child { flex: 2 1 420px; }
+.site-footer p + p { flex: 1 1 240px; }
+.site-footer code { font: inherit; font-weight: 700; }
 
-@media (max-width: 34rem) {
-  .site-header { flex-direction: column; gap: .75rem; }
+/* --- narrow screens ------------------------------------------------------ */
+@media (max-width: 640px) {
+  .band { padding-block: 44px 52px; }
+  .band--page { padding-top: 28px; }
+  .hero { padding-block: 24px 48px; }
+  .row-when { flex-basis: 100%; font-size: 17px; }
+  .tl-plate { padding: 16px 16px 12px; }
+  .tl-hint { margin-left: 0; }
 }

@@ -46,7 +46,12 @@ maxAge = '24h'
 venue = 'venues'
 
 [params]
+# The name in the top bar of every page.
+brand = 'tkuhn.org'
 description = 'CEO and founder at Knowledge Pixels. Semantic technologies for communicating knowledge.'
+
+# The paragraph under the name on the home page. Falls back to `description`.
+about = 'I am CEO and Founder at Knowledge Pixels (and a former academic) focussing on how we can apply semantic technologies in a user-friendly manner to radically improve the communication of knowledge.'
 
 # The home-page headline. Each entry is either a role -- rendered as
 # "Role · Organisation", with the organisation linked when `href` is set -- or a
@@ -56,32 +61,25 @@ highlights = [
   { text = 'Formerly academia; nanopublications, FAIR data, and controlled natural language' },
 ]
 
-# `icon` names a mark in layouts/_partials/icon.html. Any other value renders as
-# literal text, so a character like '✉' still works for a link with no mark.
+# The links under the opening paragraph on the home page, in this order.
 [[params.links]]
 label = 'Email'
 href = 'mailto:kuhntobias@gmail.com'
-icon = 'email'
 [[params.links]]
 label = 'ORCID'
 href = 'https://orcid.org/0000-0002-1267-0234'
-icon = 'orcid'
 [[params.links]]
 label = 'GitHub'
 href = 'https://github.com/tkuhn'
-icon = 'github'
 [[params.links]]
 label = 'Google Scholar'
 href = 'http://scholar.google.com/citations?user=26_NNqEAAAAJ'
-icon = 'scholar'
 [[params.links]]
 label = 'LinkedIn'
 href = 'https://www.linkedin.com/in/tkuhn/'
-icon = 'linkedin'
 [[params.links]]
 label = 'Mastodon'
 href = 'https://mastodon.social/@tkuhn'
-icon = 'mastodon'
 
 # ---------------------------------------------------------------------------
 # Everything below is the whole content model. Connect views, get a website.
@@ -91,6 +89,14 @@ icon = 'mastodon'
 # subject. The view's own title and structural position are ignored: what a
 # section is called and where it sits is this site's business, so `title` and
 # `weight` stay here. Use `query` instead of `view` to name a query directly.
+#
+# Three optional keys are read by this site's layouts, not by the module:
+#   display    'timeline' draws the entries as bars on a time axis, 'cards'
+#              lays them out as a grid; anything else is a list of rows
+#   dateStyle  'day' prints "26 Mar 2026", 'range' prints "2015 – 2022" from the
+#              startYear and endYear columns; anything else prints the year
+#   latest     a singular noun; the section's newest entry is then featured in
+#              the dark band on the home page as "Latest <noun>"
 # ---------------------------------------------------------------------------
 [params.nanopub]
 # Was query.knowledgepixels.com. Switched 2026-08-28: that instance was in
@@ -117,6 +123,7 @@ title = 'Publications'
 blurb = 'Papers I have authored, as recorded in the nanopublication network.'
 empty = 'No papers linked to this ORCID in the network yet.'
 weight = 1
+latest = 'paper'
 view = 'https://w3id.org/np/RAR5QfVtTglBt4tuOYnlH6zs6MkLlYrFrMVYFrVGZOBJA/papers-for-author-view'
 [params.nanopub.sections.fields]
 title = 'paper_label'
@@ -132,6 +139,8 @@ title = 'Talks'
 blurb = 'Invited talks and presentations.'
 empty = 'No presentations linked to this ORCID in the network yet.'
 weight = 2
+latest = 'talk'
+dateStyle = 'day'
 view = 'https://w3id.org/np/RAq02zzyspzoN3I-ViEWKxtQfDAsCyNswKW1fzbA-02Xc/presentations-view'
 # The query returns only the label, date and event. The abstract and the links
 # to slides are in the nanopublication itself, so each talk page loads it in
@@ -151,6 +160,9 @@ title = 'Posts'
 blurb = 'Short posts and updates, published as nanopublications.'
 empty = 'No posts yet.'
 weight = 3
+latest = 'post'
+dateStyle = 'day'
+display = 'cards'
 view = 'https://w3id.org/np/RA4HJpu6eJPhf6N2w1_-5M7jb1o7mcVdH0UuJ0tlMQbG8/user-posts-view'
 # Post bodies are HTML, not markdown. Keeping the markup is what [security]
 # allowContent above pays for; swap to `contentPlain = true` to strip tags.
@@ -191,6 +203,8 @@ title = 'Career'
 blurb = 'Positions held and degrees awarded, as recorded in the nanopublication network.'
 empty = 'Nothing linked to this ORCID in the network yet.'
 weight = 5
+display = 'timeline'
+dateStyle = 'range'
 query = 'https://w3id.org/np/RAZ2e5Zx_f7DgQAs3qLgcFRgABQNEhp-OudcjCtsOPZBg/get-cv-entries-for-person'
 [params.nanopub.sections.queryParams]
 person = '$ORCID'
@@ -213,6 +227,8 @@ title = 'Projects'
 blurb = 'Research projects I have taken part in.'
 empty = 'No projects linked to this ORCID in the network yet.'
 weight = 6
+display = 'cards'
+dateStyle = 'range'
 query = 'https://w3id.org/np/RALA6FacvKnUGk6tEhv7Ldub5tLwFhToZinCALrAQRy7M/get-projects-for-participant'
 [params.nanopub.sections.queryParams]
 participant = '$ORCID'
@@ -231,6 +247,7 @@ title = 'Events'
 blurb = 'Workshops and other academic events I have organized.'
 empty = 'No events linked to this ORCID in the network yet.'
 weight = 7
+dateStyle = 'day'
 query = 'https://w3id.org/np/RAIEWBhPg4db5fEo5rIf5NOuJLx1PSoEQcrxWN-jChgJ0/get-events-organized-by'
 [params.nanopub.sections.queryParams]
 organizer = '$ORCID'

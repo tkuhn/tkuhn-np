@@ -1,0 +1,29 @@
+{{- /*
+  The entries of a section, newest first.
+
+  A section with dateStyle = 'range' is ordered by the year an entry started
+  and, among those, by how late it ended -- one still running counts as latest,
+  and a degree (a point in time) comes after a position of the same year. The
+  page date alone cannot say that: it only carries the start year.
+
+  Args: pages, sec. Returns a slice of pages.
+*/ -}}
+{{- $out := .pages.ByDate.Reverse -}}
+{{- if eq .sec.dateStyle "range" -}}
+  {{- $items := slice -}}
+  {{- range .pages -}}
+    {{- $row := .Params.row | default dict -}}
+    {{- $start := int (index $row "startYear" | default 0) -}}
+    {{- $degree := eq (index $row "entryKind") "degree" -}}
+    {{- $end := $start -}}
+    {{- if not $degree -}}
+      {{- $end = int (index $row "endYear" | default 9999) -}}
+    {{- end -}}
+    {{- $items = $items | append (dict "page" . "key" (printf "%04d%04d%d" $start $end (cond $degree 0 1))) -}}
+  {{- end -}}
+  {{- $out = slice -}}
+  {{- range sort $items "key" "desc" -}}
+    {{- $out = $out | append .page -}}
+  {{- end -}}
+{{- end -}}
+{{- return $out -}}

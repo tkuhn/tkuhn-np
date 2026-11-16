@@ -2,8 +2,8 @@
   A live section: a <nanopub-list> that queries the network in the browser.
 
   This stands in for the module's nanopub/live.html, which can do neither of
-  the two things below. It still leans on the module for everything else --
-  resolving the section's view to a query, and loading the elements script.
+  the two things below. It still leans on the module for resolving the
+  section's view to a query; the script comes from elements-script.html.
 
   1. No `endpoint` attribute. Given one, <nanopub-list> asks that instance and
      nothing else, so the section reads "Failed to load." whenever it is down.
@@ -17,8 +17,9 @@
      [params.nanopub] to pin the browser to one instance too.
 
   2. A <template> for the rows. The built-in row is a bare title and a raw
-     xsd:dateTime; this one links the title to the nanopublication and prints
-     a readable date. `np` is a w3id.org URI, which sends a browser to Nanodash.
+     xsd:dateTime; this one is laid out like the rows of the built sections
+     (see item.html), links the title to the nanopublication and prints a
+     readable date. `np` is a w3id.org URI, which sends a browser to Nanodash.
 
   Args:
     section      id of a section in params.nanopub.sections
@@ -41,7 +42,7 @@
   {{- $params = merge $params (dict $k $val) -}}
 {{- end -}}
 
-{{- partial "nanopub/elements-script.html" . -}}
+{{- partial "elements-script.html" . -}}
 
 <nanopub-list
   query-template="{{ $source.queryId }}"
@@ -53,9 +54,9 @@
   link-target="_blank"
 >
   <template>
-    <li>
-      <a class="np-title" data-bind-href="{{ $fields.link | default "np" }}" data-bind="{{ $titleField }}"></a>
-      {{ with $dateField }}<time data-bind="{{ . }}" data-format="date"></time>{{ end }}
+    <li class="row">
+      {{ with $dateField }}<time class="row-when" data-bind="{{ . }}" data-format="date"></time>{{ end }}
+      <div class="row-main"><a class="row-title" data-bind-href="{{ $fields.link | default "np" }}" data-bind="{{ $titleField }}"></a></div>
     </li>
   </template>
 </nanopub-list>

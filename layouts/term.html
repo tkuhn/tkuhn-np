@@ -1,5 +1,11 @@
 {{ define "main" }}
-  <section class="np-section"><h2>{{ .Title }}</h2>
-    <ul class="np-list">{{ range .Pages.ByDate.Reverse }}{{ partial "item.html" . }}{{ end }}</ul>
+  <section class="band band--brown band--page">
+    <div class="container">
+      {{ with .Parent }}<p class="crumb"><a href="{{ .RelPermalink }}">← {{ .Title }}</a></p>{{ end }}
+      <div class="section-head"><h1><span class="hl">{{ .Title }}</span></h1></div>
+      <ul class="rows">
+        {{- range .Pages.ByDate.Reverse }}{{ partial "item.html" (dict "page" .) }}{{ end }}
+      </ul>
+    </div>
   </section>
 {{ end }}

@@ -1,16 +1,9 @@
 {{ define "main" }}
-  <section class="np-section">
-    <h2>{{ .Title }}</h2>
-    {{ with .Params.blurb }}<p class="blurb">{{ . }}</p>{{ end }}
-    {{ if eq .Params.mode "live" }}
-      {{ partial "live-list.html" (dict "section" .Params.section "groupByYear" true) }}
-    {{ else if .Pages }}
-      {{ range .Pages.ByDate.Reverse.GroupByDate "2006" }}
-        <h3>{{ .Key }}</h3>
-        <ul class="np-list">{{ range .Pages }}{{ partial "item.html" . }}{{ end }}</ul>
-      {{ end }}
-    {{ else }}
-      <p class="np-empty">{{ .Params.empty }}</p>
-    {{ end }}
+  {{ $sec := partial "nanopub/section-config.html" (dict "id" .Params.section) }}
+  <section class="band band--brown band--page">
+    <div class="container">
+      {{ partial "section-head.html" (dict "page" . "sec" $sec "home" false) }}
+      {{ partial "section-body.html" (dict "page" . "sec" $sec "home" false) }}
+    </div>
   </section>
 {{ end }}

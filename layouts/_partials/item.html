@@ -1,11 +1,21 @@
-{{- $nanodash := printf "%s/" (strings.TrimSuffix "/" (site.Params.nanopub.nanodash | default "https://nanodash.net/")) -}}
-<li>
-  <div>
-    <a class="np-title" href="{{ .RelPermalink }}">{{ .Title }}</a>
-    {{ with .Params.summary }}<div class="np-body">{{ replace . "\n" ", " }}</div>{{ end }}
+{{- /*
+  One entry as a row: when, title and a line of detail, provenance.
+
+  Args: page, sec (optional; looked up from the page's section when absent, as
+  on a taxonomy term page, where entries of several sections can meet).
+*/ -}}
+{{- $page := .page -}}
+{{- $sec := .sec -}}
+{{- if not $sec -}}
+  {{- with $page.Params.section }}{{ $sec = partial "nanopub/section-config.html" (dict "id" .) }}{{ end -}}
+{{- end -}}
+{{- $when := partial "when.html" (dict "page" $page "sec" $sec) -}}
+{{- $sub := partial "summary.html" (dict "page" $page) -}}
+<li class="row">
+  <span class="row-when">{{ $when }}</span>
+  <div class="row-main">
+    <a class="row-title" href="{{ $page.RelPermalink }}">{{ $page.Title }}</a>
+    {{ with $sub }}<div class="row-sub">{{ . }}</div>{{ end }}
   </div>
-  <div class="np-meta">
-    {{ with .Date }}{{ if not .IsZero }}<time datetime="{{ .Format "2006-01-02" }}">{{ .Format "2006" }}</time>{{ end }}{{ end }}
-    {{ with .Params.nanopub }}<a class="np-prov" href="{{ printf "%sexplore?id=%s" $nanodash (. | urlquery) }}" title="{{ . }}">np</a>{{ end }}
-  </div>
+  {{ partial "prov.html" $page }}
 </li>

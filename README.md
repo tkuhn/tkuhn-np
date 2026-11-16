@@ -23,9 +23,10 @@ nanopublication network, declared in `hugo.toml`:
 | Posts | static | `user-posts-view` → `get-posts-by-user` |
 | Activity | live | `latest-nanopubs-by-user-view` → `get-latest-nanopubs-by-user` |
 
-The name, avatar, nanopub count and signing keys in the header are read from the
-network too, via the module's `nanopub/profile.html` partial. Nothing about the
-author is hand-maintained here except the links and the one-line highlights.
+The name and photo at the top of the home page, and the nanopub count and
+signing keys in the footer, are read from the network too, via the module's
+`nanopub/profile.html` partial. Nothing about the author is hand-maintained here
+except the links, the one-line highlights and the opening paragraph.
 
 **Publishing a nanopublication is how you add content to this site.** The
 nightly workflow rebuilds and it appears — no commit needed.
@@ -43,6 +44,18 @@ version is pinned by `elementsVersion` in `hugo.toml`):
   `layouts/_partials/live-details.html`. They are read from each talk's own
   nanopublication, because the talks query does not return them. A section opts
   in with `details = 'live'`; the partial explains where that works.
+
+The script tag for both comes from `layouts/_partials/elements-script.html`.
+
+### How a section is drawn
+
+Each section is a list of rows unless `hugo.toml` says otherwise: `display =
+'cards'` lays the entries out as a grid, `display = 'timeline'` draws them as
+bars on a time axis (Career), and `dateStyle` picks how dates are printed. A
+section with `latest = '<noun>'` has its newest entry featured in the dark band
+on the home page. The comment above the sections in `hugo.toml` has the details.
+
+Colours, type sizes and fonts are set once, at the top of `assets/style.css`.
 
 ## Local development
 
@@ -78,3 +91,7 @@ do not break.
 
 Layouts and stylesheet are derived from the `exampleSite` of nanopub-hugo,
 MIT-licensed — see `LICENSE.nanopub-hugo`.
+
+`static/fonts/NotoEmoji.woff2` is Noto Emoji, Copyright 2013 Google LLC, under
+the SIL Open Font License 1.1. The nanopublication mark next to each entry is
+Nanodash's `nanopub-icon.svg`.

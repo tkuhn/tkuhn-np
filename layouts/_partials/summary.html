@@ -1,0 +1,15 @@
+{{- /*
+  One line of plain text about an entry: its summary column, or failing that the
+  start of its body. Markup is stripped -- an event description arrives as HTML
+  -- and a multi-valued column (one value per line) is joined with commas.
+
+  Args: page, length (characters to keep; default 200).
+  Returns a string, empty when the entry has neither.
+*/ -}}
+{{- $out := "" -}}
+{{- with .page.Params.summary -}}
+  {{- $out = replace (trim (plainify .) " \n") "\n" ", " -}}
+{{- else -}}
+  {{- $out = trim .page.Plain " \n" -}}
+{{- end -}}
+{{- return (truncate (.length | default 200) $out) -}}

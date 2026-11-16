@@ -1,0 +1,94 @@
+{{- /*
+  Entries as bars on a time axis, for sections with `display = 'timeline'`.
+
+  One row per entry, newest first. A bar runs from the entry's startYear to the
+  end of its endYear and fills its row; an entry without an endYear runs to the
+  right edge. An entry whose entryKind is "degree" is a point in time and is
+  drawn as a narrow mark in the middle of its year. The label starts inside the
+  bar and runs on to the right where the bar is shorter than the text.
+
+  The label has two lines: what the entry is, and where. The query returns one
+  label ("Postdoc at ETH Zurich") and the organisation's name, so the first line
+  is the label with the organisation taken off its end.
+
+  Reads these columns from .Params.row: startYear, endYear, entryKind,
+  organization_label. Args: pages, sec.
+*/ -}}
+{{- $sec := .sec -}}
+{{- $axisEnd := add now.Year 1 -}}
+{{- $axisStart := $axisEnd -}}
+{{- $entries := slice -}}
+{{- range .pages -}}
+  {{- $page := . -}}
+  {{- $row := .Params.row | default dict -}}
+  {{- with index $row "startYear" -}}
+    {{- $start := int . -}}
+    {{- $degree := eq (index $row "entryKind") "degree" -}}
+    {{- $end := $start -}}
+    {{- if not $degree -}}
+      {{- with index $row "endYear" }}{{ $end = int . }}{{ else }}{{ $end = sub $axisEnd 1 }}{{ end -}}
+    {{- end -}}
+    {{- if lt $start $axisStart }}{{ $axisStart = $start }}{{ end -}}
+
+    {{- $org := index $row "organization_label" | default "" -}}
+    {{- $what := $page.Title -}}
+    {{- with $org -}}
+      {{- range slice ", from the " " from the " " from " " at the " " at " -}}
+        {{- $tail := printf "%s%s" . $org -}}
+        {{- if strings.HasSuffix $what $tail }}{{ $what = strings.TrimSuffix $tail $what }}{{ end -}}
+      {{- end -}}
+    {{- end -}}
+
+    {{- $entries = $entries | append (dict
+      "page" $page "start" $start "end" $end "degree" $degree "what" $what "org" $org
+      "key" (printf "%04d%04d%d" $start $end (cond $degree 0 1))
+    ) -}}
+  {{- end -}}
+{{- end -}}
+{{- $span := float (sub $axisEnd $axisStart) -}}
+
+<div class="tl-plate">
+  <div class="tl-legend">
+    <span class="tl-key"><span class="tl-swatch" aria-hidden="true"></span>position</span>
+    <span class="tl-key"><span class="tl-swatch tl-swatch--degree" aria-hidden="true"></span>degree</span>
+    <span class="tl-hint">Each one links to its entry.</span>
+  </div>
+  <div class="tl-scroll">
+    <div class="tl">
+      <div class="tl-frame">
+        {{- range seq $axisStart (sub $axisEnd 1) }}
+          {{- if eq (mod . 5) 0 }}
+            <span class="tl-grid" aria-hidden="true" style="{{ printf "left: %.3f%%" (mul (div (float (sub . $axisStart)) $span) 100.0) | safeCSS }}"></span>
+          {{- end }}
+        {{- end }}
+        <ol class="tl-rows">
+          {{- range sort $entries "key" "desc" }}
+            {{- $when := partial "when.html" (dict "page" .page "sec" $sec) }}
+            {{- $left := mul (div (float (sub .start $axisStart)) $span) 100.0 }}
+            {{- $width := mul (div (float (add (sub .end .start) 1)) $span) 100.0 }}
+            {{- $mid := mul (div (add (float (sub .start $axisStart)) 0.5) $span) 100.0 }}
+            <li class="tl-row">
+              {{- if .degree }}
+                <a class="tl-bar tl-bar--degree" href="{{ .page.RelPermalink }}" title="{{ .page.Title }} · {{ $when }}" style="{{ printf "left: calc(%.3f%% - 5px)" $mid | safeCSS }}">
+              {{- else }}
+                <a class="tl-bar" href="{{ .page.RelPermalink }}" title="{{ .page.Title }} · {{ $when }}" style="{{ printf "left: %.3f%%; width: %.3f%%" $left $width | safeCSS }}">
+              {{- end }}
+                <span class="tl-label">
+                  <span class="tl-what">{{ .what }}</span>
+                  <span class="tl-where">{{ .org }}<span class="vh">, {{ $when }}</span></span>
+                </span>
+              </a>
+            </li>
+          {{- end }}
+        </ol>
+      </div>
+      <div class="tl-axis" aria-hidden="true">
+        {{- range seq $axisStart (sub $axisEnd 1) }}
+          {{- if eq (mod . 5) 0 }}
+            <span{{ if eq . $axisStart }} class="tl-first"{{ end }} style="{{ printf "left: %.3f%%" (mul (div (float (sub . $axisStart)) $span) 100.0) | safeCSS }}">{{ . }}</span>
+          {{- end }}
+        {{- end }}
+      </div>
+    </div>
+  </div>
+</div>

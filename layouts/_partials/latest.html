@@ -1,0 +1,34 @@
+{{- /*
+  The dark band under the opening: the newest entry of every section that sets
+  `latest = '<noun>'` in hugo.toml, in section order.
+*/ -}}
+{{- $items := slice -}}
+{{- range sort (site.Params.nanopub.sections | default slice) "weight" -}}
+  {{- $sec := . -}}
+  {{- if $sec.latest -}}
+    {{- with site.GetPage (printf "/%s" $sec.id) -}}
+      {{- with first 1 .Pages.ByDate.Reverse -}}
+        {{- $items = $items | append (dict "sec" $sec "page" (index . 0)) -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- with $items }}
+  <div class="band--dark">
+    <div class="container latest">
+      {{- range . }}
+        {{- $when := partial "when.html" . }}
+        {{- $sub := partial "summary.html" (dict "page" .page "length" 110) }}
+        <a class="latest-item" href="{{ .page.RelPermalink }}">
+          <span class="latest-label">Latest {{ .sec.latest }}{{ with $when }} · {{ . }}{{ end }}</span>
+          <span class="latest-title">{{ .page.Title }}</span>
+          {{- with $sub }}
+            <span class="latest-sub">{{ . }}</span>
+          {{- else }}
+            {{- if eq .sec.details "live" }}<span class="latest-sub">Abstract and links on its page</span>{{ end }}
+          {{- end }}
+        </a>
+      {{- end }}
+    </div>
+  </div>
+{{- end }}

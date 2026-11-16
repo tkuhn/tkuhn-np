@@ -1,0 +1,39 @@
+{{- /*
+  The entries of a section, drawn the way its `display` asks for.
+
+    mode = 'live'          queried in the browser by <nanopub-list>
+    display = 'timeline'   bars on a time axis; the section page adds the rows
+    display = 'cards'      a grid of cards
+    otherwise              rows
+
+  The home page shows the newest few (the section's `limit`, else 6 cards or 8
+  rows) and always the whole timeline; the section page shows everything.
+
+  Args: page (the section page), sec, home.
+*/ -}}
+{{- $page := .page -}}
+{{- $sec := .sec -}}
+{{- $home := .home -}}
+{{- $limit := $sec.limit | default (cond (eq $sec.display "cards") 6 8) -}}
+{{- $pages := partial "ordered.html" (dict "pages" $page.Pages "sec" $sec) -}}
+{{- $shown := $pages -}}
+{{- if $home }}{{ $shown = first $limit $pages }}{{ end -}}
+
+{{- if eq $sec.mode "live" }}
+  {{ partial "live-list.html" (dict "section" $sec.id "groupByYear" (not $home)) }}
+{{- else if not $pages }}
+  <p class="empty">{{ $page.Params.empty }}</p>
+{{- else if eq $sec.display "timeline" }}
+  {{ partial "timeline.html" (dict "pages" $pages "sec" $sec) }}
+  {{- if not $home }}
+    <ul class="rows rows--below">
+      {{- range $pages }}{{ partial "item.html" (dict "page" . "sec" $sec) }}{{ end }}
+    </ul>
+  {{- end }}
+{{- else if eq $sec.display "cards" }}
+  {{ partial "cards.html" (dict "pages" $shown "sec" $sec) }}
+{{- else }}
+  <ul class="rows">
+    {{- range $shown }}{{ partial "item.html" (dict "page" . "sec" $sec) }}{{ end }}
+  </ul>
+{{- end }}

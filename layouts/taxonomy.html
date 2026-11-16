@@ -1,8 +1,15 @@
 {{ define "main" }}
-  <section class="np-section"><h2>{{ .Title }}</h2>
-    <ul class="np-list">{{ range .Pages }}
-      <li><a class="np-title" href="{{ .RelPermalink }}">{{ .Title }}</a>
-        <div class="np-meta">{{ len .Pages }}</div></li>
-    {{ end }}</ul>
+  <section class="band band--brown band--page">
+    <div class="container">
+      <div class="section-head"><h1><span class="hl">{{ .Title }}</span></h1></div>
+      <ul class="rows">
+        {{- range .Pages.ByTitle }}
+          <li class="row">
+            <span class="row-when">{{ len .Pages }}</span>
+            <div class="row-main"><a class="row-title" href="{{ .RelPermalink }}">{{ .Title }}</a></div>
+          </li>
+        {{- end }}
+      </ul>
+    </div>
   </section>
 {{ end }}
