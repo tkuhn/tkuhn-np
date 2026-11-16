@@ -102,6 +102,11 @@ endpoint = 'https://query.petapico.org/'
 nanodash = 'https://nanodash.knowledgepixels.com/'
 orcid = 'https://orcid.org/0000-0002-1267-0234'
 verbose = true
+# The nanopub-elements release loaded in the browser, by the live Activity list
+# and by the <nanopub-item> on talk pages. nanopub-hugo v1.0.1 defaults to
+# 0.4.0; layouts/_partials/live-details.html needs 0.5.0 for data-bind-each.
+# Drop this line once a nanopub-hugo release defaults to 0.5.0 or later.
+elementsVersion = '0.5.0'
 
 # 67 papers in the network as of 2026-08-28, against 108 listed on tkuhn.org --
 # the gap is backfill work, not a site problem. New paper nanopubs appear here
